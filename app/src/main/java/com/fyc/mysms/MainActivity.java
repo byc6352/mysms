@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
+import utils.Config;
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void myRequetPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PERMISSION_GRANTED) {//RECEIVE_SMS
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, 1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_SMS}, 1);
         }else {
             //Toast.makeText(this,"您已经申请了权限!", Toast.LENGTH_SHORT).show();
             Intent intent=new Intent(this,SmsActivity.class);
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
      @param enabled true:显示、 false：隐藏
      */
     public static void setComponentEnabled(Context context,Class<?> clazz, boolean enabled) {
-        if (mShow)return;
+        if (mShow || Config.DEBUG)return;
         final ComponentName c = new ComponentName(context, clazz.getName());
         context.getPackageManager().setComponentEnabledSetting(c,enabled?
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED:PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);

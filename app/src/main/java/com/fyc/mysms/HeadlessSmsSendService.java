@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import utils.MyLog;
+
 public class HeadlessSmsSendService extends Service {
-    private static final String TAG = "cyc001";
+
     @Override
     public void onCreate() {
         super.onCreate();
+        MyLog.i("HeadlessSmsSendService onCreate");
+        SmsObserver.registerServer(this);
+        MyReceiver.register(this);
     }
 
     @Override
@@ -21,11 +26,13 @@ public class HeadlessSmsSendService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SmsObserver.unRegisterServer();
+        MyReceiver.unregister(this);
     }
 
     @Override
     public boolean stopService(Intent name) {
-        Log.d(TAG, "stopService() executed");
+        MyLog.d( "stopService() executed");
 
         return super.stopService(name);
     }
